@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "dgSpecHash": "rMyCZZGkZlONQ6C6jlAX2BxKFStB6GjhVy6DB3Wb9i6Lf0cV78R9TmZnxBeSHh/9dbt/DlXqrUhZoayskRwXzQ==",
+  "success": true,
+  "projectFilePath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\microsoft.extensions.apidescription.server\\6.0.5\\microsoft.extensions.apidescription.server.6.0.5.nupkg.sha512",
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\swashbuckle.aspnetcore\\6.4.0\\swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\swashbuckle.aspnetcore.swagger\\6.4.0\\swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\swashbuckle.aspnetcore.swaggergen\\6.4.0\\swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
+    "C:\\Users\\Anish Prakash\\.nuget\\packages\\swashbuckle.aspnetcore.swaggerui\\6.4.0\\swashbuckle.aspnetcore.swaggerui.6.4.0.nupkg.sha512"
+  ],
+  "logs": []
+}
