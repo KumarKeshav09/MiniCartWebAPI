@@ -29,7 +29,7 @@ namespace MintCartWebApi.Service.Auth
         {
             try
             {
-                _logger.LogError("You are entering the authentication process.");
+                _logger.LogInfo("You are entering the authentication process.");
 
                 var exUser = await _context.Users.FirstOrDefaultAsync(u => u.UserEmail == userEmail);
                 if (exUser == null)
