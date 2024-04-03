@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "G:\\MintCartWebApi\\MintCartWebApi.csproj": {}
+    "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj": {}
   },
   "projects": {
-    "G:\\MintCartWebApi\\MintCartWebApi.csproj": {
+    "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "G:\\MintCartWebApi\\MintCartWebApi.csproj",
+        "projectUniqueName": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
         "projectName": "MintCartWebApi",
-        "projectPath": "G:\\MintCartWebApi\\MintCartWebApi.csproj",
-        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
-        "outputPath": "G:\\MintCartWebApi\\obj\\",
+        "projectPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
+        "packagesPath": "C:\\Users\\Anish Prakash\\.nuget\\packages\\",
+        "outputPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Anish Prakash\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -51,6 +51,14 @@
             "Microsoft.AspNetCore.Authentication.JwtBearer": {
               "target": "Package",
               "version": "[8.0.3, )"
+            },
+            "Microsoft.AspNetCore.Hosting": {
+              "target": "Package",
+              "version": "[2.1.1, )"
+            },
+            "Microsoft.AspNetCore.Hosting.Abstractions": {
+              "target": "Package",
+              "version": "[2.1.1, )"
             },
             "Microsoft.EntityFrameworkCore": {
               "target": "Package",

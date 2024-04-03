@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using MintCartWebApi.Common;
 using MintCartWebApi.Data;
+using MintCartWebApi.DBModels;
 using MintCartWebApi.Helper;
 using MintCartWebApi.LoggerService;
 using MintCartWebApi.ModelDto;
@@ -43,7 +44,7 @@ namespace MintCartWebApi.Service
                 var filePath = "/";
                 if (userDto.ProfileImage != null && userDto.ProfileImage.Length > 0)
                 {
-                    filePath = await FileHelper.SaveFileAsync(userDto.ProfileImage, _webHostEnvironment.WebRootPath);
+                    filePath = await FileHelper.SaveFileAsync(userDto.ProfileImage, _webHostEnvironment.ContentRootPath);
                 }
                 var newUser = new DBModels.User();
                 newUser.ProfileImageUrl = filePath;
@@ -66,6 +67,27 @@ namespace MintCartWebApi.Service
             catch (Exception ex)
             {
                 _logger.LogError($"method createUserAsync {userDto.ToString()} , {ex.Message}");
+                throw;
+            }
+        }
+
+        public async Task<DBModels.User?> getUserAsync(int id)
+        {
+            try
+            {
+                var exUser = await _context.Users.FirstOrDefaultAsync(u => u.UserId == id);
+                if (exUser == null)
+                {
+                    _logger.LogWarning($"no user found by userId : {id}");
+                    return null;
+                }
+
+                _logger.LogInfo($"user data is successfully retrived ,with userId{exUser.UserId}");
+                return exUser;
+            }
+            catch (Exception ex)
+            {
+                this._logger.LogError($"method getUserAsync ,userId: {id} , {ex.Message}");
                 throw;
             }
         }
