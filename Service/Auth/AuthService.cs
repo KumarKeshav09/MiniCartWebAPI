@@ -25,7 +25,7 @@ namespace MintCartWebApi.Service.Auth
         }
 
 
-        public async Task<(string userToken, int userId)?> Authenticate(string userEmail, string password)
+        public async Task<string> Authenticate(string userEmail, string password)
         {
             try
             {
@@ -75,11 +75,13 @@ namespace MintCartWebApi.Service.Auth
                     Expires = DateTime.Now.AddDays(1),
                     SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
                 };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                var validToken =  tokenHandler.WriteToken(token);
 
                 _context.Users.Update(exUser);
                 await _context.SaveChangesAsync();
                 _logger.LogInfo($"User successfully logged in with userEmail: {userEmail}");
-                return (null, exUser.UserId);
+                return validToken?.ToString();
             }
             catch (Exception ex)
             {

@@ -2,6 +2,6 @@
 {
     public interface IAuthService
     {
-        public Task<(string userToken, int userId)?> Authenticate(string userEmail, string password);
+        public Task<string> Authenticate(string userEmail, string password);
     }
 }

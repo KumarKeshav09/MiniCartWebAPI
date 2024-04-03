@@ -6,6 +6,7 @@ using MintCartWebApi.Data;
 using MintCartWebApi.DBModels;
 using MintCartWebApi.LoggerService;
 using MintCartWebApi.Service;
+using MintCartWebApi.Service.Auth;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -23,7 +24,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
 builder.Services.AddTransient<IUserService, UserService>();
-
+builder.Services.AddTransient<IAuthService, AuthService>();
 
 var appSettingSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingSection);
@@ -87,6 +88,7 @@ if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+    app.UseHsts();
 }
 
 
