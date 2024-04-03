@@ -12,8 +12,8 @@ using MintCartWebApi.Data;
 namespace MintCartWebApi.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20240402073845_initialMigration")]
-    partial class initialMigration
+    [Migration("20240403060116_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

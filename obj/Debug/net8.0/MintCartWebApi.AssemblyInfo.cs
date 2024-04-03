@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MintCartWebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c2e00b9f6c679246ad16e8aa7dd7cdc1e25075a3")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+89bfd0a78c902fed4fba536d14410e3e687e5374")]
 [assembly: System.Reflection.AssemblyProductAttribute("MintCartWebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MintCartWebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

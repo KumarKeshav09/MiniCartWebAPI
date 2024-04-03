@@ -5,8 +5,6 @@ namespace MintCartWebApi.ModelDto
 {
     public class RegisterUserDto
     {
-        [Key]
-        public int UserId { get; set; }
 
         [Required(ErrorMessage = "User name is required")]
         [Column(TypeName = "nvarchar(255)")]

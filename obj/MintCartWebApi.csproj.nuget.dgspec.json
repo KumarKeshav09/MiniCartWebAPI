@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj": {}
+    "G:\\MintCartWebApi\\MintCartWebApi.csproj": {}
   },
   "projects": {
-    "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj": {
+    "G:\\MintCartWebApi\\MintCartWebApi.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
+        "projectUniqueName": "G:\\MintCartWebApi\\MintCartWebApi.csproj",
         "projectName": "MintCartWebApi",
-        "projectPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
-        "packagesPath": "C:\\Users\\Anish Prakash\\.nuget\\packages\\",
-        "outputPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\obj\\",
+        "projectPath": "G:\\MintCartWebApi\\MintCartWebApi.csproj",
+        "packagesPath": "C:\\Users\\admin\\.nuget\\packages\\",
+        "outputPath": "G:\\MintCartWebApi\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Anish Prakash\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
