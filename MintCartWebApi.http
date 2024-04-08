@@ -1,6 +1,0 @@
-@MintCartWebApi_HostAddress = http://localhost:5136
-
-GET {{MintCartWebApi_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
