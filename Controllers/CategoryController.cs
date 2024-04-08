@@ -18,8 +18,8 @@ namespace MintCartWebApi.Controllers
             _categoryService = categoryService;
         }
 
-        [HttpGet("{categoryId}")]
-        public async Task<ActionResult<Category>> GetCategoryById(int categoryId)
+        [HttpGet("get-category-by-id")]
+        public async Task<ActionResult> GetCategoryById(int categoryId)
         {
             if (categoryId > 0)
             {
@@ -36,12 +36,12 @@ namespace MintCartWebApi.Controllers
             }
         }
 
-        [HttpGet]
-        public async Task<ActionResult<List<Category>>> GetAllCategories()
+        [HttpGet("get-all-category")]
+        public async Task<ActionResult> GetAllCategories(int pageNumber = 1, int pageSize = 10, string search = "")
         {
             if (ModelState.IsValid)
             {
-                var data = await _categoryService.GetAllCategoriesAsync();
+                var data = await _categoryService.GetAllCategoriesAsync(pageNumber, pageSize, search);
                 if (data != null)
                 {
                     return Ok(new { success = true, statusCode = 200, data = data });
@@ -58,12 +58,12 @@ namespace MintCartWebApi.Controllers
             return BadRequest(new { success = false, statusCode = 400, errors = errors });
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Category>> CreateCategory([FromForm]Category category)
+        [HttpPost("register-category")]
+        public async Task<ActionResult> CreateCategory(RegisterCategoryDto model)
         {
             if (ModelState.IsValid)
             {
-                var data = await _categoryService.CreateCategoryAsync(category);
+                var data = await _categoryService.CreateCategoryAsync(model);
                 if (data != null)
                 {
                     return Ok(new { success = true, statusCode = 200, data = data });
@@ -80,13 +80,17 @@ namespace MintCartWebApi.Controllers
             return BadRequest(new { success = false, statusCode = 400, errors = errors });
         }
 
-        [HttpPut("{categoryId}")]
-        public async Task<ActionResult> UpdateCategory(int categoryId, Category category)
+        [HttpPut("update-category")]
+        public async Task<ActionResult> UpdateCategory(Category category)
         {
-            if (categoryId == category.categoryId)
+            if (category != null)
             {
-                await _categoryService.UpdateCategoryAsync(category);
-                return NoContent();
+               var data = await _categoryService.UpdateCategoryAsync(category);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
             else
             {
@@ -94,13 +98,17 @@ namespace MintCartWebApi.Controllers
             }
         }
 
-        [HttpDelete("{categoryId}")]
+        [HttpDelete("delete-category")]
         public async Task<ActionResult> DeleteCategory(int categoryId)
         {
             if (categoryId > 0)
             {
-                await _categoryService.DeleteCategoryAsync(categoryId);
-                return NoContent();
+               var data =  await _categoryService.DeleteCategoryAsync(categoryId);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
             else
             {
