@@ -16,16 +16,16 @@ namespace MintCartWebApi.Service
     {
         private readonly ApplicationDbContext _context;
         private readonly ILoggerManager _logger;
-        private readonly IMapper _mapper;
+        //private readonly IMapper _mapper;
         private readonly IConfiguration _configuration;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
         public UserService(ApplicationDbContext context, ILoggerManager logger
-            , IMapper mapper, IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
+            , IConfiguration configuration, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _logger = logger;
-            _mapper = mapper;
+            //_mapper = mapper;
             _configuration = configuration;
             _webHostEnvironment = webHostEnvironment;
         }

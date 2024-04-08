@@ -5067,19 +5067,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Anish Prakash\\.nuget\\packages\\": {}
+    "C:\\Users\\kumar\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
+      "projectUniqueName": "C:\\Users\\kumar\\Source\\Repos\\MintCartWebApi\\MintCartWebApi.csproj",
       "projectName": "MintCartWebApi",
-      "projectPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\MintCartWebApi.csproj",
-      "packagesPath": "C:\\Users\\Anish Prakash\\.nuget\\packages\\",
-      "outputPath": "C:\\HARD DRIVE\\asp.net_web_Api_projects\\MintCartWebApi\\MintCartWebApi\\obj\\",
+      "projectPath": "C:\\Users\\kumar\\Source\\Repos\\MintCartWebApi\\MintCartWebApi.csproj",
+      "packagesPath": "C:\\Users\\kumar\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\kumar\\Source\\Repos\\MintCartWebApi\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Anish Prakash\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\kumar\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -5099,6 +5099,11 @@
         "warnAsError": [
           "NU1605"
         ]
+      },
+      "restoreAuditProperties": {
+        "enableAudit": "true",
+        "auditLevel": "low",
+        "auditMode": "direct"
       }
     },
     "frameworks": {
@@ -5175,7 +5180,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.101/PortableRuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\8.0.200/PortableRuntimeIdentifierGraph.json"
       }
     }
   }
