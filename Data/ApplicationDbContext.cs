@@ -11,5 +11,9 @@ namespace MintCartWebApi.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Subcategory> Subcategories { get; set; }
+        public DbSet<Product> products { get; set; }
+        public DbSet<Category> Categories { get; set; }
+
     }
 }

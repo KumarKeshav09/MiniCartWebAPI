@@ -7,6 +7,9 @@ using MintCartWebApi.DBModels;
 using MintCartWebApi.LoggerService;
 using MintCartWebApi.Service;
 using MintCartWebApi.Service.Auth;
+using MintCartWebApi.Service.Category;
+using MintCartWebApi.Service.Product;
+using MintCartWebApi.Service.SubCategory;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +27,11 @@ builder.Services.AddDbContext<ApplicationDbContext>(
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddSingleton<ILoggerManager, LoggerManager>();
 builder.Services.AddTransient<IUserService, UserService>();
+builder.Services.AddTransient<IProductService, ProductService>();
 builder.Services.AddTransient<IAuthService, AuthService>();
+builder.Services.AddTransient<ICategoryService, CategoryService>();
+builder.Services.AddTransient<ISubcategoryService, SubcategoryService>();
+
 
 var appSettingSection = builder.Configuration.GetSection("AppSettings");
 builder.Services.Configure<AppSettings>(appSettingSection);

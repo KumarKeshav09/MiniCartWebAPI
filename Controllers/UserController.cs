@@ -22,7 +22,7 @@ namespace MintCartWebApi.Controllers
                 }
                 else
                 {
-                    return Ok(new { success = false, statusCode = 400, error = "Failed to register user" });
+                    return Ok(new { success = false, statusCode = 400, error = 4  });
                 }
             }
             var errors = ModelState.Values.SelectMany(v => v.Errors)
