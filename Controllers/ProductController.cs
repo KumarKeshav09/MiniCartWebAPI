@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using MintCartWebApi.DBModels;
 using MintCartWebApi.ModelDto;
 using MintCartWebApi.Service.Product;
 
@@ -16,79 +17,102 @@ namespace MintCartWebApi.Controllers
             _productService = productService;
         }
 
-        [HttpGet("{productId}")]
-        public async Task<ActionResult> GetProduct(int productId)
+        [HttpGet("get-product-by-id")]
+        public async Task<ActionResult> GetProductById(int productId)
         {
-            var product = await _productService.GetProductAsync(productId);
-            if (product == null)
+            if (productId > 0)
             {
-                return NotFound();
-            }
-            else
-            {
+                var product = await _productService.GetProductByIdAsync(productId);
+                if (product == null)
+                {
+                    return NotFound();
+                }
                 return Ok(product);
             }
-        }
-
-        [HttpGet]
-        public async Task<ActionResult> GetAllProducts()
-        {
-            var products = await _productService.GetAllProductsAsync();
-            if (products == null || products.Count == 0)
-            {
-                return NotFound();
-            }
             else
             {
-                return Ok(products);
+                return StatusCode(500, "Internal server error");
             }
         }
 
-        [HttpPost]
+        [HttpGet("get-all-products")]
+        public async Task<ActionResult> GetAllProducts(int pageNumber = 1, int pageSize = 10, string search = "")
+        {
+            if (ModelState.IsValid)
+            {
+                var data = await _productService.GetAllProductAsync(pageNumber, pageSize, search);
+                if (data != null)
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, statusCode = 400, error = 4 });
+                }
+            }
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                     .Select(e => e.ErrorMessage)
+                                     .ToList();
+
+            return BadRequest(new { success = false, statusCode = 400, errors = errors });
+        }
+
+        [HttpPost("register-product")]
         public async Task<ActionResult> CreateProduct(ProductDto productDto)
         {
-            if (productDto == null)
+            if (ModelState.IsValid)
             {
-                return BadRequest();
+                var data = await _productService.CreateProductAsync(productDto);
+                if (data != null)
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, statusCode = 400, error = 4 });
+                }
             }
-            else
-            {
-                var createdProduct = await _productService.CreateProductAsync(productDto);
-                return CreatedAtAction(nameof(GetProduct), new { productId = createdProduct.ProductId }, createdProduct);
-            }
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                     .Select(e => e.ErrorMessage)
+                                     .ToList();
+
+            return BadRequest(new { success = false, statusCode = 400, errors = errors });
         }
 
-        [HttpPut("{productId}")]
-        public async Task<ActionResult> UpdateProduct(int productId, [FromForm] ProductDto updatedProductDto)
+
+        [HttpPut("update-product")]
+        public async Task<ActionResult> UpdateProduct(Product updatedProduct)
         {
-            if (updatedProductDto == null)
+            if (updatedProduct != null)
             {
-                return BadRequest("Updated product data not provided.");
-            }
-
-            var updatedProduct = await _productService.UpdateProductAsync(productId, updatedProductDto);
-
-            if (updatedProduct == null)
-            {
-                return NotFound($"Product with ID {productId} not found.");
+                var data = await _productService.UpdateProductAsync(updatedProduct);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
             else
             {
-                return Ok(updatedProduct);
+                return BadRequest(new { success = false, statusCode = 500, errors = "Internal server error" });
             }
         }
 
-        [HttpDelete("{productId}")]
+        [HttpDelete("delete-product")]
         public async Task<ActionResult> DeleteProduct(int productId)
         {
-            var result = await _productService.DeleteProductAsync(productId);
-            if (!result)
+            if (productId > 0)
             {
-                return NotFound();
+                var data = await _productService.DeleteProductAsync(productId);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
             else
             {
-                return NoContent();
+                return BadRequest(new { success = false, statusCode = 500, errors = "Internal server error" });
             }
         }
     }

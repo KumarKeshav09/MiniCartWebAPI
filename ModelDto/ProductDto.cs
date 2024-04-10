@@ -5,7 +5,6 @@ namespace MintCartWebApi.ModelDto
 {
     public class ProductDto
     {
-        public int ProductId { get; set; }
 
         public string ProductName { get; set; }
 
@@ -33,8 +32,6 @@ namespace MintCartWebApi.ModelDto
 
         public string BrandName { get; set; }
 
-        public int SubcategoryId { get; set; }
-
-        public string SubcategoryName { get; set; }
+        public Subcategory Subcategory { get; set; }
     }
 }

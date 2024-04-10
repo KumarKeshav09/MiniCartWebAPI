@@ -4,10 +4,10 @@ namespace MintCartWebApi.Service.Product
 {
     public interface IProductService
     {
-        public Task<ProductDto> GetProductAsync(int productId);
-        public Task<List<ProductDto>> GetAllProductsAsync();
+        public Task<DBModels.Product> GetProductByIdAsync(int productId);
+        public Task<List<DBModels.Product>> GetAllProductAsync(int pageNumber, int pageSize, string search);
         public Task<ProductDto> CreateProductAsync(ProductDto productDto);
-        public Task<ProductDto> UpdateProductAsync(int productId, ProductDto updatedProductDto);
-        public Task<bool> DeleteProductAsync(int productId);
+        public Task<string> UpdateProductAsync(DBModels.Product updatedProduct);
+        public Task<string> DeleteProductAsync(int productId);
     }
 }
