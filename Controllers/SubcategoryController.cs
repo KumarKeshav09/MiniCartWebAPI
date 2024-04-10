@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using MintCartWebApi.DBModels;
+using MintCartWebApi.ModelDto;
 using MintCartWebApi.Service.SubCategory;
 
 namespace MintCartWebApi.Controllers
@@ -10,78 +11,110 @@ namespace MintCartWebApi.Controllers
     public class SubcategoryController : ControllerBase
     {
         private readonly ISubcategoryService _subcategoryService;
-        private readonly ILogger<SubcategoryController> _logger;
 
-        public SubcategoryController(ISubcategoryService subcategoryService, ILogger<SubcategoryController> logger)
+        public SubcategoryController(ISubcategoryService subcategoryService)
         {
             _subcategoryService = subcategoryService;
-            _logger = logger;
         }
 
 
-        [HttpPost("{categoryId}")]
-        public async Task<ActionResult<Subcategory>> CreateSubcategory(int categoryId, Subcategory subcategory)
+        [HttpPost("register-SubCategory")]
+        public async Task<ActionResult<Subcategory>> CreateSubcategory(int categoryId, SubCategoryDto model)
         {
-            try
+            if (ModelState.IsValid)
             {
-                var createdSubcategory = await _subcategoryService.CreateSubcategoryAsync(subcategory, categoryId);
-                return CreatedAtAction(nameof(GetSubcategoryById), new { id = createdSubcategory.subcategoryId }, createdSubcategory);
+                var data = await _subcategoryService.CreateSubcategoryAsync(model, categoryId);
+                if (data != null)
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, statusCode = 400, error = 4 });
+                }
             }
-            catch (Exception ex)
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                     .Select(e => e.ErrorMessage)
+                                     .ToList();
+
+            return BadRequest(new { success = false, statusCode = 400, errors = errors });
+        }
+
+        [HttpGet("get-all-subcategory")]
+        public async Task<ActionResult> GetAllSubCategories(int pageNumber = 1, int pageSize = 10, string search = "")
+        {
+            if (ModelState.IsValid)
             {
-                _logger.LogError(ex, "Error creating subcategory: {@Subcategory}", subcategory);
+                var data = await _subcategoryService.GetAllSubCategoriesAsync(pageNumber, pageSize, search);
+                if (data != null)
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                else
+                {
+                    return BadRequest(new { success = false, statusCode = 400, error = 4 });
+                }
+            }
+            var errors = ModelState.Values.SelectMany(v => v.Errors)
+                                     .Select(e => e.ErrorMessage)
+                                     .ToList();
+
+            return BadRequest(new { success = false, statusCode = 400, errors = errors });
+        }
+
+        [HttpGet("get-subcategory-by-id")]
+        public async Task<ActionResult> GetSubcategoryById(int id)
+        {
+            if (id > 0)
+            {
+                var subcategory = await _subcategoryService.GetSubcategoryByIdAsync(id);
+                if (subcategory == null)
+                {
+                    return NotFound();
+                }
+                return Ok(subcategory);
+            }
+            else
+            {
                 return StatusCode(500, "Internal server error");
             }
         }
-        [HttpGet]
-        public async Task<ActionResult<List<Subcategory>>> GetAllSubcategories()
+
+        [HttpPut("update-subcategory")]
+
+        public async Task<ActionResult> UpdateSubcategory(Subcategory subcategory)
         {
-            var subcategories = await _subcategoryService.GetAllSubcategoriesAsync();
-            if (subcategories == null || subcategories.Count == 0)
+            if (subcategory != null)
             {
-                return NoContent(); // Return 204 No Content if no subcategories found
+                var data = await _subcategoryService.UpdateSubcategoryAsync(subcategory);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
-            return Ok(subcategories);
+            else
+            {
+                return BadRequest(new { success = false, statusCode = 500, errors = "Internal server error" });
+            }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Subcategory>> GetSubcategoryById(int id)
-        {
-            if (id <= 0)
-            {
-                return BadRequest("Invalid subcategory ID");
-            }
-
-            var subcategory = await _subcategoryService.GetSubcategoryByIdAsync(id);
-            if (subcategory == null)
-            {
-                return NotFound(); // Return 404 Not Found if subcategory not found
-            }
-            return Ok(subcategory);
-        }
-
-        [HttpPut("{id}")]
-        public async Task<ActionResult> UpdateSubcategory(int id, Subcategory subcategory)
-        {
-            if (id <= 0 || subcategory == null || id != subcategory.subcategoryId)
-            {
-                return BadRequest("Invalid subcategory data or ID");
-            }
-
-            await _subcategoryService.UpdateSubcategoryAsync(subcategory);
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
+        [HttpDelete("delete-subcategory")]
         public async Task<ActionResult> DeleteSubcategory(int id)
         {
-            if (id <= 0)
+            if (id > 0)
             {
-                return BadRequest("Invalid subcategory ID");
+                var data = await _subcategoryService.DeleteSubcategoryAsync(id);
+                if (data.Contains("successfully"))
+                {
+                    return Ok(new { success = true, statusCode = 200, data = data });
+                }
+                return BadRequest(new { success = false, statusCode = 500, errors = data });
             }
-
-            await _subcategoryService.DeleteSubcategoryAsync(id);
-            return NoContent();
+            else
+            {
+                return BadRequest(new { success = false, statusCode = 500, errors = "Internal server error" });
+            }
         }
     }
 }

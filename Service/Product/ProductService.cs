@@ -1,9 +1,13 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using MintCartWebApi.Common;
 using MintCartWebApi.Data;
+using MintCartWebApi.DBModels;
+using MintCartWebApi.LoggerService;
 using MintCartWebApi.ModelDto;
 using MintCartWebApi.Utilities;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace MintCartWebApi.Service.Product
 {
@@ -12,10 +16,10 @@ namespace MintCartWebApi.Service.Product
     {
         private readonly ApplicationDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ILogger<ProductService> _logger;
+        private readonly ILoggerManager _logger;
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public ProductService(ApplicationDbContext dbContext, IMapper mapper, ILogger<ProductService> logger, IWebHostEnvironment webHostEnvironment)
+        public ProductService(ApplicationDbContext dbContext, IMapper mapper, ILoggerManager logger, IWebHostEnvironment webHostEnvironment)
         {
             _dbContext = dbContext;
             _mapper = mapper;
@@ -23,44 +27,41 @@ namespace MintCartWebApi.Service.Product
             _webHostEnvironment = webHostEnvironment;
         }
 
-        public async Task<ProductDto> GetProductAsync(int productId)
+        public async Task<DBModels.Product> GetProductByIdAsync(int productId)
         {
-            _logger.LogInformation("Getting product with ID: {ProductId}", productId);
             try
             {
-                var productEntity = await _dbContext.products
-                    .Include(p => p.Subcategory)
-                    .FirstOrDefaultAsync(p => p.productId == productId);
-
-                if (productEntity == null)
-                {
-                    _logger.LogWarning("Product with ID {ProductId} not found", productId);
-                    return null;
-                }
-
-                var productDto = _mapper.Map<ProductDto>(productEntity);
-                productDto.SubcategoryName = productEntity.Subcategory?.subcategoryName;
-
-                return productDto;
+                _logger.LogInfo("Retrieving category by Id: {CategoryId}");
+                var productById = await _dbContext.products.Include(p => p.Subcategory).ThenInclude(s => s.Category).FirstOrDefaultAsync(p => p.productId == productId);
+                return productById;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting product with ID: {ProductId}", productId);
+                _logger.LogError($"Error retrieving category by Id: {productId} ,{ex.Message}");
                 throw;
             }
         }
 
-        public async Task<List<ProductDto>> GetAllProductsAsync()
+        public async Task<List<DBModels.Product>> GetAllProductAsync(int pageNumber, int pageSize, string search)
         {
-            _logger.LogInformation("Getting all products");
             try
             {
-                var productEntities = await _dbContext.products.ToListAsync();
-                return _mapper.Map<List<ProductDto>>(productEntities);
+                _logger.LogInfo("Retrieving all categories");
+                var productQuery = _dbContext.products.Include(p => p.Subcategory).ThenInclude(s => s.Category).AsQueryable();
+                if (!string.IsNullOrEmpty(search))
+                {
+                    productQuery = productQuery.Where(c => c.ProductName.Contains(search) || c.BrandName.Contains(search));
+                }
+                var productDetails = await productQuery
+                                     .Skip((pageNumber - 1) * pageSize)
+                                     .Take(pageSize)
+                                     .ToListAsync();
+
+                return productDetails;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while getting all products");
+                _logger.LogError($"Error retrieving all categories {ex.Message}");
                 throw;
             }
         }
@@ -69,7 +70,7 @@ namespace MintCartWebApi.Service.Product
         {
             try
             {
-                _logger.LogInformation("Creating a new product");
+                _logger.LogInfo("Creating a new product");
 
                 if (productDto == null)
                 {
@@ -88,12 +89,11 @@ namespace MintCartWebApi.Service.Product
                     productDto.ProductImageUrl = imageUrls;
                 }
 
-                // Retrieve subcategory details from the database
-                var subcategory = await _dbContext.Subcategories.FirstOrDefaultAsync(s => s.subcategoryId == productDto.SubcategoryId);
+                var subcategory = await _dbContext.Subcategories.Include(s => s.Category).FirstOrDefaultAsync(s => s.subcategoryId == productDto.Subcategory.subcategoryId);
                 if (subcategory == null)
                 {
-                    _logger.LogError($"Subcategory with ID {productDto.SubcategoryId} not found.");
-                    throw new ArgumentException($"Subcategory with ID {productDto.SubcategoryId} not found.", nameof(productDto.SubcategoryId));
+                    _logger.LogError($"Sub Category with ID {productDto.Subcategory.subcategoryId} not found.");
+                    throw new ArgumentException($"Subcategory with ID {productDto.Subcategory.subcategoryId} not found.", nameof(productDto.Subcategory.subcategoryId));
                 }
 
                 var product = _mapper.Map<DBModels.Product>(productDto);
@@ -104,86 +104,90 @@ namespace MintCartWebApi.Service.Product
                 product.HighlightsOfProduct = productDto.HighlightsOfProduct.ToList();
                 product.Specifications = productDto.Specifications;
                 product.BrandName = productDto.BrandName;
+                product.Subcategory = subcategory;
 
-                product.subcategoryId = subcategory.subcategoryId;
 
                 _dbContext.products.Add(product);
                 await _dbContext.SaveChangesAsync();
                 var createdProductDto = _mapper.Map<ProductDto>(product);
 
-                _logger.LogInformation("Product created successfully");
+                _logger.LogInfo("Product created successfully");
 
                 return createdProductDto;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while creating a new product");
+                _logger.LogError($"Error retrieving all categories {ex.Message}");
                 throw;
             }
         }
 
-        public async Task<ProductDto> UpdateProductAsync(int productId, ProductDto updatedProductDto)
+        public async Task<string> UpdateProductAsync(DBModels.Product updatedProduct)
         {
             try
             {
-                _logger.LogInformation($"Updating product with ID {productId}");
-                var existingProduct = await _dbContext.products.FindAsync(productId);
+                _logger.LogInfo($"Updating product with ID {updatedProduct.productId}");
+                if (updatedProduct == null)
+                {
+                    _logger.LogError("Updated product data not provided.");
+                    throw new ArgumentNullException(nameof(updatedProduct), "Updated product data not provided.");
+                }
+                var existingProduct = await _dbContext.products
+                    .Include(p => p.Subcategory)
+                    .FirstOrDefaultAsync(p => p.productId == updatedProduct.productId);
                 if (existingProduct == null)
                 {
-                    _logger.LogError($"Product with ID {productId} not found.");
-                    return null;
+                    _logger.LogError($"Product with ID {updatedProduct.productId} not found.");
+                    throw new ArgumentException($"Product with ID {updatedProduct.productId} not found.", nameof(updatedProduct));
                 }
 
-                existingProduct.ProductName = updatedProductDto.ProductName;
-                existingProduct.ShortDescription = updatedProductDto.ShortDescription;
-                existingProduct.LongDescription = updatedProductDto.LongDescription;
-                existingProduct.HighlightsOfProduct = updatedProductDto.HighlightsOfProduct.ToList();
-                existingProduct.Specifications = updatedProductDto.Specifications;
-                existingProduct.BrandName = updatedProductDto.BrandName;
-
-                if (updatedProductDto.MainProductImage != null && updatedProductDto.MainProductImage.Length > 0)
+                existingProduct.ProductName = updatedProduct.ProductName;
+                existingProduct.ShortDescription = updatedProduct.ShortDescription;
+                existingProduct.LongDescription = updatedProduct.LongDescription;
+                existingProduct.HighlightsOfProduct = updatedProduct.HighlightsOfProduct.ToList();
+                existingProduct.Specifications = updatedProduct.Specifications;
+                existingProduct.BrandName = updatedProduct.BrandName;
+                var subcategory = await _dbContext.Subcategories.Include(s => s.Category).FirstOrDefaultAsync(s => s.subcategoryId == updatedProduct.Subcategory.subcategoryId);
+                if (subcategory == null)
                 {
-                    existingProduct.MainProductImageUrl = await FileHelper.SaveFileAsync(updatedProductDto.MainProductImage, _webHostEnvironment.ContentRootPath);
+                    throw new ArgumentException($"Category with ID {updatedProduct.Subcategory.categoryId} not found.");
                 }
+                existingProduct.Subcategory = subcategory;
 
-                if (updatedProductDto.ProductImage != null && updatedProductDto.ProductImage.Count > 0)
-                {
-                    var imageUrls = await FileHelper.SaveMultiFilesAsync(updatedProductDto.ProductImage, _webHostEnvironment.ContentRootPath);
-                    existingProduct.ProductImageUrl = imageUrls;
-                }
-
+                _dbContext.Update(updatedProduct);
                 await _dbContext.SaveChangesAsync();
 
-                _logger.LogInformation($"Product with ID {productId} updated successfully");
-                return _mapper.Map<ProductDto>(existingProduct);
+
+                _logger.LogInfo($"Product with ID {updatedProduct.productId} updated successfully");
+
+                return MessagesAlerts.SuccessfullSave;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, $"Error occurred while updating product with ID {productId}");
+                _logger.LogError($"Error updating product with ID {updatedProduct.productId}: {ex.Message}");
                 throw;
             }
         }
 
-
-        public async Task<bool> DeleteProductAsync(int productId)
+        public async Task<string> DeleteProductAsync(int productId)
         {
-            _logger.LogInformation("Deleting product with ID: {ProductId}", productId);
+            string message = MessagesAlerts.FailDelete;
             try
             {
+                _logger.LogInfo("Deleting product with ID: {ProductId}");
                 var productEntity = await _dbContext.products.FindAsync(productId);
-                if (productEntity == null)
+                if (productEntity != null)
                 {
-                    _logger.LogWarning("Product with ID {ProductId} not found for deletion", productId);
-                    return false;
+                    _dbContext.products.Remove(productEntity);
+                    await _dbContext.SaveChangesAsync();
+                    message = MessagesAlerts.SuccessfullDelete;
                 }
+                return message;
 
-                _dbContext.products.Remove(productEntity);
-                await _dbContext.SaveChangesAsync();
-                return true;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting product with ID: {ProductId}", productId);
+                _logger.LogError($"Error deleting category with Id: {productId} , {ex.Message}");
                 throw;
             }
         }
